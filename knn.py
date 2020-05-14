@@ -35,7 +35,7 @@ def shuffle_and_split_dataset(dataset):
     X = np.array(list(X)).reshape(m, d)
     y = np.array(list(y)).reshape(m, 1)
 
-    split_point = int(math.ceil(X.shape[0] * 0.8))
+    split_point = int(math.ceil(X.shape[0] * 0.8)) # 80% data in training set, 20% data in test set
     train_X = X[:split_point, :]
     train_y = y[:split_point, :]
     test_X = X[split_point:, :]
@@ -97,7 +97,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='knn')
     parser.add_argument('--dataset', type=str, help='Path to dataset')
-    parser.add_argument('--k', type=int, help='Value for kn number of nearest neighbor', default=10)
+    parser.add_argument('--k', type=int, help='Value for k -> number of nearest neighbor', default=5)
 
     args = parser.parse_args()
 
@@ -107,18 +107,11 @@ if __name__ == '__main__':
     k = args.k
 
     dataset = read_file(args.dataset)
-    avg_accuracy = 0.0
-    avg_error = 0.0
-    for i in range(20):
-        train_X, train_y, test_X, test_y = shuffle_and_split_dataset(dataset)
+    train_X, train_y, test_X, test_y = shuffle_and_split_dataset(dataset)
 
-        # print("Read Training size: {0}, Test size: {1}".format(str(train_X.shape), str(test_X.shape)))
+    print("Read Training size: {0}, Test size: {1}".format(str(train_X.shape), str(test_X.shape)))
 
-        predictions = predict(train_X, train_y, test_X, args.k)
-        accuracy, error = calculate_accuracy_error(test_y, predictions)
-        avg_accuracy += accuracy
-        avg_error += error
+    predictions = predict(train_X, train_y, test_X, args.k)
+    accuracy, error = calculate_accuracy_error(test_y, predictions)
 
-        print("Total accuracy: {0}, error: {1}, k: {2}".format(str(accuracy), str(error), str(k)))
-
-    print("Average accuracy: " + str(avg_accuracy/20.0) + " Average Error: " + str(avg_error/20.0) + " " + str(k))
+    print("Validation Accuracy: {0}, error: {1}, k: {2}".format(str(accuracy), str(error), str(k)))
